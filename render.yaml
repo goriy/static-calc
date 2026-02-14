@@ -1,0 +1,17 @@
+  # A static site
+  - type: web
+    name: calc
+    runtime: static
+#    buildCommand: yarn build
+#    staticPublishPath: ./build
+#    previews:
+#      generation: automatic # Enable service previews
+#    buildFilter:
+#      paths:
+#        - src/**/*.js
+#      ignoredPaths:
+#        - src/**/*.test.js
+    headers:
+      - path: /*.css
+        name: Content-Type
+        value: text/css
