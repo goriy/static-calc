@@ -1,0 +1,562 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html><head>
+<html lang="ru">
+<title>Evil Spirits Invasion</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="MobileOptimized" content="176" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="robots" content="noindex,nofollow" />
+    <script src="https://telegram.org/js/telegram-web-app.js?2"></script>
+    <script>
+        function setThemeClass() {
+            document.documentElement.className = Telegram.WebApp.colorScheme;
+        }
+
+        Telegram.WebApp.onEvent('themeChanged', setThemeClass);
+        setThemeClass();
+
+    </script>
+
+<style>
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+table {
+  border: none;
+  /*table-layout: auto;*/
+  /*width: 100%; */
+  border-collapse: collapse;
+}
+
+table.rtable {
+  border: 4px solid #000;
+  /*table-layout: auto;*/
+  /*width: 100%; */
+  border-collapse: collapse;
+  padding: 3px;
+  margin: 3px;
+  /*border-radius: 3px;*/
+  /* width: 100%; */
+}
+
+td, th  {
+  margin: 4px;
+  padding: 2px;
+/*  border: 3px solid #000;*/
+}
+
+.input-container {
+  width: 100%;
+  background: #FFF;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-content: space-around;
+  padding: 10px;
+}
+
+.input-title {
+    padding: 0px 0px 0px 0px;
+    margin: 5px;
+    /*font-size: 16px;*/
+    color: #000;
+    font-weight: 300;
+    display: inline;
+    font-size: 150%;
+}
+
+.button {
+    /*display: inline;*/
+    margin: 3px;
+    padding: 0px 15px 0px 15px;
+    /*font-size: 38px;*/
+    line-height: 35px;
+    min-height: 40px;
+    min-width: 60px;
+    font-size: 5vw;
+}
+
+.result  {
+  width: 90%;
+  padding: 1px;
+  font-size: 5vw;
+}
+
+.result input[type="text"],input[type="number"] {
+  width: 8em;
+  border: 1px solid #000;
+  border-radius: 3px;
+  font-size: 1.5em;
+  padding: 5px;
+}
+
+.help-container {
+  color: #000;
+  background-color: #FFF;
+  padding: 10px;
+  display: flex;
+  justify-content: flex-start;
+  /*flex-direction: column;*/
+  flex-wrap: wrap;
+  font-size: 100%;
+}
+
+.help-container h3,p {
+  padding: 5px 0px;
+  margin: 0px;
+}
+
+.help-container td, th  {
+  margin: 1px;
+  padding: 2px;
+  border: 3px solid #000;
+  width: 10em;
+  text-align: center;
+}
+
+.details-container {
+  color: #000;
+  background-color: #FFF;
+  padding: 10px;
+  display: flex;
+  justify-content: flex-start;
+  /*flex-direction: column;*/
+  flex-wrap: wrap;
+  font-size: 100%;
+}
+
+.details-container td, th  {
+  margin: 0px;
+  padding: 1px;
+  border: 3px solid #000;
+  width: 9em;
+  text-align: center;
+}
+
+.ra {
+    text-align: right;
+    vertical-align: middle;
+}
+.ri {
+    text-align: left;
+    vertical-align: middle;
+}
+
+.lvl {
+  background: #FFEEEE;
+  font-weight: bold;
+}
+
+.w19 {
+  background: #EEE;
+  font-weight: bold;
+}
+
+.w7 {
+  background: #E2EFDA;
+  font-weight: bold;
+}
+
+.w14 {
+  background: #D9E1F2;
+  font-weight: bold;
+}
+
+.w17 {
+  background: #FFF2CC;
+  font-weight: bold;
+}
+
+.w10 {
+  background: #FCE4D6;
+  font-weight: bold;
+}
+
+.w20 {
+  background: #FDD;
+  font-weight: bold;
+}
+
+
+</style>
+
+<script>
+
+const MaxLevel = 184;
+
+const LevelPower = [
+0,
+1000000,
+2000000,
+3000000,
+6000000,
+9000000,
+13000000,
+19000000,
+25000000,
+33000000,
+42000000,
+52000000,
+63000000,
+76000000,
+90000000,
+105000000,
+122000000,
+140000000,
+160000000,
+181000000,
+204000000,
+228000000,
+253000000,
+281000000,
+309000000,
+340000000,
+372000000,
+406000000,
+441000000,
+478000000,
+517000000,
+557000000,
+599000000,
+643000000,
+689000000,
+736000000,
+785000000,
+836000000,
+889000000,
+944000000,
+1000000000,
+1053000000,
+1120000000,
+1181000000,
+1251000000,
+1312000000,
+1380000000,
+1464000000,
+1521000000,
+1610000000,
+1670000000,
+1762000000,
+1829000000,
+1920000000,
+2000000000,
+2081000000,
+2163000000,
+2247000000,
+2332000000,
+2445000000,
+2542000000,
+2640000000,
+2741000000,
+2843000000,
+2948000000,
+3005000000,
+3164000000,
+3276000000,
+3420000000,
+3505000000,
+3623000000,
+3743000000,
+3865000000,
+3990000000,
+4117000000,
+4246000000,
+4400000000,
+4511000000,
+4670000000,
+4800000000,
+4925000000,
+5068000000,
+5213000000,
+5400000000,
+5509000000,
+5662000000,
+5816000000,
+5973000000,
+6132000000,
+6294000000,
+6457000000,
+6624000000,
+6792000000,
+6963000000,
+7137000000,
+7310000000,
+7491000000,
+7680000000,
+7854000000,
+8040000000,
+8228000000,
+8418000000,
+8611000000,
+8800000000,
+9005000000,
+9205000000,
+9408000000,
+9613000000,
+9821000000,
+9950000000,
+10244000000,
+10460000000,
+10678000000,
+10898000000,
+11121000000,
+11347000000,
+11575000000,
+
+12018000000,
+12243000000,
+12275000000,
+12514000000,
+12755000000,
+12999000000,
+13245000000,
+13494000000,
+13746000000,
+14000000000,
+14257000000,
+14603000000,
+14779000000,
+15043000000,
+15311000000,
+15581000000,
+15854000000,
+16129000000,
+16451000000,
+16688000000,
+16979000000,
+17258000000,
+17507000000,
+17771000000,
+18133000000,
+18299000000,
+18563000000,
+19091000000,
+19338000000,
+19619000000,
+19646000000,
+19883000000,
+20147000000,
+20907000000,
+21228000000,
+21553000000,
+21881000000,
+22114000000,
+22452000000,
+22880000000,
+23219000000,
+23561000000,
+23905000000,
+24251474000,
+24602000000,
+24955000000,
+25312000000,
+25672000000,
+26031000000,
+26394000000,
+26762000000,
+27132000000,
+27503000000,
+27881000000,
+28263000000,
+28650000000,
+29039000000,
+29431000000,
+29803000000,
+30193000000,
+30592000000,
+30991000000,
+31397000000,
+31805000000,
+32208211000,
+32616000000,
+33030000000,
+33446000000
+];
+
+const LevelK = [
+0, 1, 2, 3, 4, 5, 6, 35, 8, 9, 100,
+11, 12, 13, 70, 15, 16, 85, 18, 19, 200];
+
+/*****************************************************************************/
+function print_val (val)  {
+  var dat = val / 1000000;
+  var units;
+  var mantissa = "";
+
+  if (dat < 1000) {
+    units = " млн";
+  }
+  else {
+    bil = Math.ceil(dat / 100);
+    mil = bil % 10;
+    dat = Math.trunc(bil / 10);
+    if (mil > 0) {
+      mantissa = "," + mil.toString();
+    }
+    units = " млрд";
+  }
+
+  var s = dat.toString();
+  fs = s.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return fs + mantissa + units;
+}
+
+/*****************************************************************************/
+function print_result (level)  {
+
+  slv=document.getElementById('show-level');
+  s7 =document.getElementById('show-wave7');
+  s10=document.getElementById('show-wave10');
+  s14=document.getElementById('show-wave14');
+  s17=document.getElementById('show-wave17');
+  s19=document.getElementById('show-wave19');
+  s20=document.getElementById('show-wave20');
+
+  slv.innerHTML = "<b>" + level.toString() + "</b>";
+  var bp = LevelPower[level];
+  s7.innerHTML = print_val(bp * LevelK[7]);
+  s14.innerHTML = print_val(bp * LevelK[14]);
+  s17.innerHTML = print_val(bp * LevelK[17]);
+  s10.innerHTML = print_val(bp * LevelK[10]);
+  s19.innerHTML = print_val(bp * LevelK[19]);
+  s20.innerHTML = print_val(bp * LevelK[20]);
+
+  var i;
+  for (i = 1; i <= 20; i++) {
+    key = "det-wave" + i.toString();
+    dat = document.getElementById(key);
+    dat.innerHTML = print_val(bp * LevelK[i]);
+  }
+}
+
+function do_calc() {
+  lvl=document.getElementById('level');
+  Level = parseInt(lvl.value, 10);
+  if ((Level > 0) && (Level <= MaxLevel)) {
+    print_result(Level);
+  }
+  return false;
+}
+
+function cursorBack() {
+  lvl=document.getElementById('level');
+  Level = parseInt(lvl.value, 10);
+  if (Level > 1)  {Level--;}
+  lvl.value = Level;
+  do_calc();
+}
+
+function cursorFwd() {
+  lvl=document.getElementById('level');
+  Level = parseInt(lvl.value, 10);
+  if (Level < MaxLevel)  {Level++;}
+  lvl.value = Level;
+  do_calc();
+}
+
+</script>
+
+</head><body>
+
+<datalist id="pre-levels">
+  <option value="1"></option>
+  <option value="13"></option>
+  <option value="80"></option>
+  <option value="82"></option>
+  <option value="86"></option>
+  <option value="101"></option>
+  <option value="134"></option>
+</datalist>
+
+<div class="input-container">
+
+<table border="0" width="100%">
+<tr>
+<td class="ra">Уровень (1...184):</td>
+<td class-"ri">
+<input type="number" pattern="\d*" id="level" min="1" max="184" value="82" list="pre-levels" onkeyup="return do_calc();" onchange="return do_calc();">
+</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>
+<input class="button" type="button" value="&#x25C0;" onclick="cursorBack();">
+<input class="button" type="button" value="&#x25B6;" onclick="cursorFwd();">
+</td>
+</table>
+
+</div>
+
+<br/>
+
+<div class="help-container">
+
+<table class="rtable">
+<tr class="lvl"><td><b>Уровень</b></td><td id="show-level"></td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr class="w19"><td>Волна 19</td><td id="show-wave19"></td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td>Волна 7</td><td id="show-wave7"></td></tr>
+<tr><td>Волна 14</td><td id="show-wave14"></td></tr>
+<tr><td>Волна 17</td><td id="show-wave17"></td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td>Волна 10</td><td id="show-wave10"></td></tr>
+<tr><td>Волна 20</td><td id="show-wave20"></td></tr>
+</table>
+
+</div>
+
+<br/>
+
+<div class="details-container">
+
+<table class="rtable">
+<tr><th>Волна</th><th>Мощь</th><th>Время выхода</th></tr>
+<tr><td>Волна 1</td><td id="det-wave1"></td><td>0:00</td></tr>
+<tr><td>Волна 2</td><td id="det-wave2"></td><td>0:02</td></tr>
+<tr><td>Волна 3</td><td id="det-wave3"></td><td>0:04</td></tr>
+<tr><td>Волна 4</td><td id="det-wave4"></td><td>0:06</td></tr>
+<tr><td>Волна 5</td><td id="det-wave5"></td><td>0:08</td></tr>
+<tr><td>Волна 6</td><td id="det-wave6"></td><td>0:10</td></tr>
+<tr class="w7"><td>Волна 7</td><td id="det-wave7"></td><td>0:14</td></tr>
+<tr><td>Волна 8</td><td id="det-wave8"></td><td>0:16</td></tr>
+<tr><td>Волна 9</td><td id="det-wave9"></td><td>0:18</td></tr>
+<tr class="w10"><td>Волна 10</td><td id="det-wave10"></td><td>0:23</td></tr>
+<tr><td>Волна 11</td><td id="det-wave11"></td><td>0:25</td></tr>
+<tr><td>Волна 12</td><td id="det-wave12"></td><td>0:27</td></tr>
+<tr><td>Волна 13</td><td id="det-wave13"></td><td>0:29</td></tr>
+<tr class="w14"><td>Волна 14</td><td id="det-wave14"></td><td>0:33</td></tr>
+<tr><td>Волна 15</td><td id="det-wave15"></td><td>0:35</td></tr>
+<tr><td>Волна 16</td><td id="det-wave16"></td><td>0:37</td></tr>
+<tr class="w17"><td>Волна 17</td><td id="det-wave17"></td><td>0:41</td></tr>
+<tr><td>Волна 18</td><td id="det-wave18"></td><td>0:43</td></tr>
+<tr class="w19"><td>Волна 19</td><td id="det-wave19"></td><td>0:45</td></tr>
+<tr class="w20"><td>Волна 20</td><td id="det-wave20"></td><td>0:50</td></tr>
+</table>
+
+</div>
+
+
+<script>
+
+Telegram.WebApp.ready();
+
+Telegram.WebApp.BackButton.onClick(function() {
+                history.back();
+                //DemoApp.showAlert('Back button pressed')
+            });
+
+Telegram.WebApp.BackButton.show();
+
+do_calc();
+</script>
+
+</body>
+</html>

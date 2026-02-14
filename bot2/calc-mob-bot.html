@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="MobileOptimized" content="176" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="robots" content="noindex,nofollow" />
+    <!-- telegram start -->
+    <script src="https://telegram.org/js/telegram-web-app.js?2"></script>
+    <script>
+        function setThemeClass() {
+            document.documentElement.className = Telegram.WebApp.colorScheme;
+        }
+        Telegram.WebApp.onEvent('themeChanged', setThemeClass);
+        setThemeClass();
+    </script>
+    <!-- telegram end -->
+<title>Калькулятор</title>
+<style>
+* {
+  margin: 0px 1px 0px 0px;
+  padding: 0px;
+/*  box-sizing: border-box;*/
+}
+
+table {
+  border: 1px solid #000;
+  table-layout: auto;
+  width: 100%;
+  border-collapse: collapse;
+  padding: 3px;
+  /*border-radius: 3px;*/
+  width: 100%;
+}
+
+td, th {
+  border-bottom: 1px solid #000;
+}
+
+.input-container {
+  width: 100%;
+  background: #FFF;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-content: space-around;
+}
+
+.inp {
+  background: #FFF;
+  border: 1px solid #fff;
+  width: 100%;
+  font-size: 110%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-content: center;
+  vertical-align: middle;
+
+}
+
+.inp textarea {
+  background-color: #FFF;
+  border: 1px solid #000;
+  border-radius: 3px;
+  width: 100%;
+  padding: 5px;
+  resize: vertical;
+  font-size: 5vw;
+  height: 8em;
+  margin: 7px;
+  caret-color: red;
+}
+
+.button {
+    /*display: inline;*/
+    margin: 3px;
+    /*font-size: 38px;*/
+    line-height: 35px;
+    min-height: 40px;
+    min-width: 60px;
+    font-size: 5vw;
+}
+
+.res-cont {
+  background: #FFF;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+}
+
+.result  {
+  width: 100%;
+  padding: 1px;
+}
+
+.result-len  {
+  width: 10%;
+  padding: 1px;
+  display: none;
+}
+
+.result input[type="text"]  {
+  width: 100%;
+  border: 1px solid #000;
+  border-radius: 3px;
+  font-size: 5vw;
+}
+.result-len input[type="text"]  {
+  width: 100%;
+  border: 1px solid #000;
+  border-radius: 3px;
+  font-size: 2vw;
+}
+
+.help-container {
+  color: #000;
+  background-color: #FFF;
+  padding: 20px 0;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  flex-wrap: wrap;
+  font-size: 100%;
+}
+
+.help-container h3, p {
+  padding: 5px 0px;
+  margin: 0px;
+}
+
+.input-title {
+    padding: 0px 0px 0px 0px;
+    margin: 5px;
+    /*font-size: 16px;*/
+    color: #000;
+    font-weight: 300;
+    display: inline;
+    font-size: 130%;
+}
+
+.input-title2 {
+    padding: 0px 0px 0px 0px;
+    margin: 5px;
+    /*font-size: 16px;*/
+    color: #000;
+    font-weight: 300;
+    display: inline;
+    font-size: 100%;
+}
+
+
+/* Styling Checkbox Starts */
+.checkbox-label {
+    /*display: inline;*/
+    position: relative;
+    margin: 5px;
+    cursor: pointer;
+/*
+    line-height: 24px;
+    height: 24px;
+    width: 24px;
+*/
+    clear: both;
+}
+
+.checkbox-label::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.chkbox {
+    height: 24px;
+    width: 24px;
+}
+
+</style>
+<script type="application/javascript">
+
+var LastValue;
+
+/*****************************************************************************/
+function print_result (val)  {
+  LastValue = val;
+  DoNiceBox=document.getElementById('doNice');
+  rd=document.getElementById('rDec');
+  rh=document.getElementById('rHex');
+  ro=document.getElementById('rOct');
+  rb=document.getElementById('rBin');
+  rds=document.getElementById('rDecSize');
+  rhs=document.getElementById('rHexSize');
+  ros=document.getElementById('rOctSize');
+  rbs=document.getElementById('rBinSize');
+
+  if (DoNiceBox.checked)  {
+    nice = 1;
+  }
+  else  {
+    nice = 0;
+  }
+
+  if (val == 'error')  {
+    rd.value=val;
+    rh.value=val;
+    ro.value=val;
+    rb.value=val;
+    rds.value=0;
+    rhs.value=0;
+    ros.value=0;
+    rbs.value=0;
+  }
+  else if (typeof val === 'string' || val instanceof String) {
+    rd.value=val;
+    rh.value="";
+    ro.value="";
+    rb.value="";
+    rds.value=0;
+    rhs.value=0;
+    ros.value=0;
+    rbs.value=0;
+  }
+  else {
+    s = val.toString(10);
+    len = s.length;
+    if (nice)  {
+      fs = s.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+    else  {
+      fs = val;
+    }
+    rd.value=fs;  rds.value = len;
+
+    s = val.toString(16);
+    len = s.length;
+    if (nice)  {
+      fs = ' '  + s.replace(/\B(?=([0-9a-f]{4})+(?![0-9a-f]))/g, " ");
+    }
+    else  {
+      fs = s;
+    }
+    rh.value='0x' + fs;  rhs.value = len;
+
+    s = val.toString(8);
+    len = s.length;
+    if (nice)  {
+      fs = ' ' + s.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+    else  {
+      fs = s;
+    }
+    ro.value='0' + fs;  ros.value = len;
+
+    s = val.toString(2);
+    len = s.length;
+    if (nice)  {
+      fs = s.replace(/\B(?=(\d{4})+(?!\d))/g, " ");
+    }
+    else  {
+      fs = s;
+    }
+    rb.value=fs;  rbs.value = len;
+  }
+}
+
+/*****************************************************************************/
+function log10(x)  {
+  return Math.log10(x);
+}
+/*****************************************************************************/
+function lg(x)  {
+  return Math.log10(x);
+}
+/*****************************************************************************/
+function logx(a,b)  {
+  return Math.log(b)/Math.log(a);
+}
+/*****************************************************************************/
+function db(x)  {
+  return 20 * Math.log10(x);
+}
+/*****************************************************************************/
+function dbm(x)  {
+  return 10 * Math.log10(x);
+}
+/*****************************************************************************/
+function fdb(x)  {
+  return Math.pow(10, x / 20);
+}
+/*****************************************************************************/
+function fdbm(x)  {
+  return Math.pow(10, x / 10);
+}
+/*****************************************************************************/
+function par(x,y)  {
+  return x*y/(x+y);
+}
+/*****************************************************************************/
+function k_res(r1,r2)  {
+  return r2/(r1+r2);
+}
+
+/*****************************************************************************/
+function nod(a, b) {
+	if (!a)
+		return Math.abs(b);
+	if (!b)
+		return Math.abs(a);
+	while(b)
+		if ((a %= b) === 0)
+			return Math.abs(b);
+		else if ((b %= a) === 0)
+			return Math.abs(a);
+}
+/*****************************************************************************/
+function nok(a, b) {
+    var g = nod(a,b);
+	if (g === 0) {
+		return 0;
+	}
+	return Math.abs(a*b)/g;
+}
+
+/*****************************************************************************/
+function ratio(a, b) {
+    var g = nod(a,b);
+	if (g === 0) {
+      return "error1";
+	}
+	while(g != 1) {
+	  a /= g;
+	  b /= g;
+	  g = nod(a,b);
+	}
+	return a.toString(10) + "/" + b.toString(10);
+}
+
+/*****************************************************************************/
+function pfact(n1,n2)
+{
+  var i;
+  var result = 1;
+  for (i = n1; i <= n2; i++) {
+    result *= i;
+  }
+  return result;
+}
+
+/*****************************************************************************/
+function factorial(x)
+{
+  return pfact(1,x);
+}
+
+/*****************************************************************************/
+function C(n,k)
+{
+  var chisl = pfact(k+1,n);
+  return chisl/pfact(1,(n-k));
+}
+
+/*****************************************************************************/
+function Cr(n,k)
+{
+  var chisl = pfact(k+1,n+k-1);
+  return chisl/pfact(1,(n-1));
+}
+
+/*****************************************************************************/
+function twodigits(n)
+{
+  result = ""
+  if (n < 10) {
+    result = "0" + n.toString(10);
+  }
+  else {
+    result = n.toString(10);
+  }
+  return result;
+}
+
+/*****************************************************************************/
+function threedigits(n)
+{
+  result = ""
+  if (n < 10) {
+    result = "00" + n.toString(10);
+  }
+  else if (n < 100) {
+    result = "0" + n.toString(10);
+  }
+  else {
+    result = n.toString(10);
+  }
+  return result;
+}
+
+/*****************************************************************************/
+function seconds(n)
+{
+  var val = Math.floor(n*1000);
+  var milli = val % 1000;
+  val = Math.floor(val / 1000);
+  var sec = val % 60;
+  val = Math.floor(val / 60);
+  var minu = val % 60;
+  val = Math.floor(val / 60);
+
+  return twodigits(val) + ":" + twodigits(minu) + ":" + twodigits(sec) + "." + threedigits(milli);
+}
+
+/*****************************************************************************/
+function minutes(n)
+{
+  return seconds(n*60.0);
+}
+
+/*****************************************************************************/
+function hours(n)
+{
+  return seconds(n*3600.0);
+}
+
+/*****************************************************************************/
+function factor(a) {
+  var d, t;
+  var result = "";
+  if (!a) {
+    return "a is not positive number";
+  }
+  if (a < 0)  {
+    result = "-1*";
+    a = -a;
+  }
+  a = int(a);
+
+  var orig = a;
+  d = 2;
+
+  t = a % d;
+  while(t == 0) {
+    result += d.toString(10) + "*";
+    a /= d;
+    t = a % d;
+  }
+  if (a == d) {
+    result += d.toString(10) + "*";
+    a /= d;
+  }
+  d = 3;
+  while ((a > 1) && (d <= a)) {
+    t = a % d;
+    while(t == 0) {
+      result += d.toString(10) + "*";
+      a /= d;
+      t = a % d;
+    }
+    if (a == d) {
+      result += d.toString(10) + "*";
+      a = 1;
+    }
+    d += 2;
+  }
+  return result;
+}
+
+/*****************************************************************************/
+function int(x)  {
+  var dig;
+  var mantissa = (Math.abs(x) * 10.0) % 10;
+  if (x < 0)  {
+    dig = Math.ceil(x);
+    if (mantissa >= 5)  {
+      dig -= 1;
+    }
+  }
+  else  {
+    dig = Math.floor(x);
+    if (mantissa >= 5)  {
+      dig += 1;
+    }
+  }
+  return dig;
+}
+
+/*****************************************************************************/
+function dia2area(x)  {
+  return (x*x)*Math.PI/4.0;
+}
+
+/*****************************************************************************/
+function area2dia(x)  {
+  return Math.sqrt(x/Math.PI)*2.0
+}
+
+/*****************************************************************************/
+function date_diff(start_date, end_date)  {
+  var sy = Number(start_date.substring(0,4));
+  var sm = Number(start_date.substring(5,7));
+  var sd = Number(start_date.substring(8,10));
+  var ey = Number(end_date.substring(0,4));
+  var em = Number(end_date.substring(5,7));
+  var ed = Number(end_date.substring(8,10));
+
+  var st = new Date(sy, sm-1, sd, 0, 0, 0, 0);
+  var en = new Date(ey, em-1, ed, 0, 0, 0, 0);
+
+  var spd = 86400*1000;
+
+  ddiff = (en.getTime() - st.getTime()) / spd;
+  return ddiff;
+}
+
+/*****************************************************************************/
+function otpusk_from_to(start_date, end_date)  {
+  return date_diff(start_date, end_date) + 1; /* +1 так как включительно */
+}
+
+/*****************************************************************************/
+function date_after_n(start_date, days)  {
+  var sy = Number(start_date.substring(0,4));
+  var sm = Number(start_date.substring(5,7));
+  var sd = Number(start_date.substring(8,10));
+
+  var st = new Date(sy, sm-1, sd, 0, 0, 0, 0);
+
+  var spd = 86400*1000;
+  nts = st.getTime() + (days * spd);
+
+  var en = new Date();
+  en.setTime(nts);
+  return en;
+}
+
+/*****************************************************************************/
+function otpusk_end_date(start_date, n)  {
+  return date_after_n(start_date, n - 1); /* -1 так как включительно */
+}
+
+/*****************************************************************************/
+function line(x0,y0,x1,y1)  {
+  a = (y1 - y0) / (x1 - x0);
+  b = y0 - a * x0;
+  return "a = " + a + "; b = " + b + ";";
+}
+
+/*****************************************************************************/
+function ts(tscode)  {
+  var timeArray = tscode.split(":");
+  var h = 0,  m = 0,  s = 0;
+  if (timeArray.length == 2) {
+    m = parseInt(timeArray[0]) * 60;
+    s = parseInt(timeArray[1]);
+  }
+  else if (timeArray.length == 3) {
+    h = parseInt(timeArray[0]) * 3600;
+    m = parseInt(timeArray[1]) * 60;
+    s = parseInt(timeArray[2]);
+  }
+  else {
+    s = parseInt(timeArray[0]);
+  }
+  return (h + m + s);
+}
+
+/*****************************************************************************/
+function toreg(value, bits=16)  {
+
+  if (bits < 2) {
+    return ("разрядность не может быть меньше 2");
+  }
+  var maxV = BigInt(1) << BigInt(bits);
+  var mask = (maxV - BigInt(1));
+//  var signBit = 1 << (bits - 1);
+  return ((maxV + BigInt(value)) & mask);
+}
+
+/*****************************************************************************/
+function frreg(value, bits=16)  {
+
+  if (bits < 2) {
+    return ("разрядность не может быть меньше 2");
+  }
+  var maxV = BigInt(1) << BigInt(bits);
+  var signBit = BigInt(1) << (BigInt(bits) - BigInt(1));
+  var mask = (maxV - BigInt(1));
+  var v = BigInt(value);
+  var retval = v;
+  if ((v & signBit) != 0) {
+    retval = -((value & mask) ^ mask) - BigInt(1);
+  }
+  return retval;
+}
+
+/*****************************************************************************/
+function to_vbyte(X)
+{
+  var encodedByte;
+  var result = [];
+  do {
+     encodedByte = X & 0x7F;
+     X >>= 7;
+     // if there are more data to encode, set the top bit of this byte
+     if (X > 0) {
+       encodedByte = encodedByte | 0x80;
+     }
+     result.push(encodedByte);
+  } while (X > 0);
+  return result;
+}
+
+/*****************************************************************************/
+function hex(buffer) { // buffer is an ArrayBuffer
+  //return [...new Uint8Array(buffer)]
+  //    .map(x => '0x' + x.toString(16).padStart(2, '0') + ',')
+  //    .join('');
+  return buffer
+      .map(x => '0x' + x.toString(16).padStart(2, '0') + ',')
+      .join('');
+}
+
+/*****************************************************************************/
+function from_vbyte(X)
+{
+  var nbyte;
+  var result = 0;
+  var nshift = 0;
+
+  for (i = 0; i < X.length; i++) {
+     nbyte = X[i];
+     result |= (nbyte & 0x7F) << nshift;
+     nshift += 7;
+  }
+  return result;
+}
+
+/*****************************************************************************/
+function do_calc()
+{
+  src=document.getElementById('src');
+  try{
+    val=eval(src.value.replace(/\b(abs|acos|asin|atan|atan2|ceil|cos|exp|floor|log|max|min|pow|random|round|sin|sqrt|tan|E|LN10|LN2|LOG10E|LOG2E|PI|SQRT1_2|SQRT2)\b/g,'Math.$1'));
+    print_result(val);
+  }catch(ex){
+    print_result('error');
+  }
+  return false;
+}
+
+/*****************************************************************************/
+function itxtM(textToInsert)
+{
+  input=document.getElementById('src');
+  // make sure we have focus in the right input
+  //input.focus();
+  // and just run the command
+  //document.execCommand('insertText', false /*no UI*/, textToInsert);
+
+  // get current text of the input
+  const value = input.value;
+
+  // save selection start and end position
+  const start = input.selectionStart;
+  const end = input.selectionEnd;
+
+  var today  = new Date();
+  var todayString = "'" + today.toISOString().slice(0, 10) + "'";
+  var t = textToInsert.replace('%T', todayString);
+  t = t.replace('%T', todayString);
+
+  t = t.replace('%Q', "'");
+  t = t.replace('%Q', "'");
+  t = t.replace('%Q', "'");
+  t = t.replace('%Q', "'");
+  t = t.replace('%Q', "'");
+  t = t.replace('%Q', "'");
+
+  var cursor = t.indexOf('%C');
+  t = t.replace('%C', "");
+  if (cursor < 0) {
+    cursor = t.length;
+  }
+
+  // update the value with our text inserted
+  input.value = value.slice(0, start) + t + value.slice(end);
+
+  // update cursor to be at the end of insertion
+  input.selectionStart = input.selectionEnd = start + cursor;
+  input.focus();
+  return do_calc();
+}
+
+/*****************************************************************************/
+function cursorFwd()
+{
+  input=document.getElementById('src');
+  const start = input.selectionStart;
+  input.selectionStart = input.selectionEnd = start + 1;
+  input.focus();
+}
+
+/*****************************************************************************/
+function cursorBack()
+{
+  input=document.getElementById('src');
+  const start = input.selectionStart;
+  input.selectionStart = input.selectionEnd = start - 1;
+  input.focus();
+}
+
+/*****************************************************************************/
+function setbg(color)
+{
+document.getElementById("src").style.background=color
+}
+/*****************************************************************************/
+
+</script>
+</head><body>
+
+<div class="input-container">
+<div class="inp">
+<textarea autofocus="autofocus" placeholder="Enter expression (java script)..."  id="src" onkeyup="return do_calc();" onchange="return do_calc();"
+onfocus="setbg('#f0fff3');" onblur="setbg('white')"></textarea>
+</div>
+
+<div class="res-cont">
+<span class="result"><input type="text" id="rDec" readonly></span><span class="result-len"><input type="text" size="3" id="rDecSize" readonly></span>
+</div>
+
+<div class="res-cont">
+<span class="result"><input type="text" id="rHex" readonly></span><span class="result-len"><input type="text" size="3" id="rHexSize" readonly></span>
+</div>
+
+<div class="res-cont" style="display:none">
+<span class="result"><input type="text" id="rOct" readonly></span><span class="result-len"><input type="text" size="3" id="rOctSize" readonly></span>
+</div>
+
+<div class="res-cont">
+<span class="result"><input type="text" id="rBin" readonly></span><span class="result-len"><input type="text" size="3" id="rBinSize" readonly></span>
+</div>
+
+<div class="inp">
+  <label class="checkbox-label">
+      <input type="checkbox" id="doNice" onchange="print_result(LastValue);">
+      <span class="checkbox-custom rectangular"></span>
+  </label>
+  <span class="input-title2">C разделителями</span>
+  <span class="input-title"><input class="button" type="button" value="<" onclick="cursorBack();"></span>
+  <span class="input-title"><input class="button" type="button" value=">" onclick="cursorFwd();"></span>
+</div>
+
+</div>
+
+<div class="help-container">
+
+<h3><a href="catalog.html">Каталог</a></h3>
+
+<h3>Общее:</h3>
+
+Числа с плавающей точкой:<br>
+-2.3e-2 = -0.023<br>
+5e6 = 5000000<br><br>
+
+Возведение в степень: 2**3 = 8<br>
+
+
+<h3>Доступные константы:</h3>
+
+<p>PI, E, LN10, LN2, LOG10E, LOG2E</p>
+<p>SQRT1_2 - 1/корень из 2</p>
+<p>SQRT2 - корень из 2</p>
+
+<h3>Доступные функции:</h3>
+
+<p>Стандартные: abs, acos, asin, atan, atan2, ceil, cos, exp, floor, log, max, min, pow, random, round, sin, sqrt, tan.</p>
+
+<h3>Дополнительные функции</h3>
+
+<table>
+<tr><td><a href="#" onclick="itxtM( 'int(%C)'   )"> int(x)</a></td><td>округление по правилам арифметики.</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'logx(%C,)' )"> logx(A,B)</a></td><td>логарифм B по основанию A.</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'log10(%C)' )"> log10(x) или lg(x)</a> </td><td>логарифм по основанию 10.</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'db(%C)'    )"> db(x)</a>  </td><td>перевод из разов в децибелы.</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'dbm(%C)'   )"> dbm(x)</a> </td><td>перевод из разов в децибелы (по мощности).</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'fdb(%C)'   )"> fdb(x)</a> </td><td>перевод децибел в разы.</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'fdbm(%C)'  )"> fdbm(x)</a></td><td>перевод из децибел (по мощности) в разы.</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'dia2area(%C)')">dia2area(d)</a></td><td>вычисление площади сечения по диаметру.</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'area2dia(%C)')">area2dia(a)</a></td><td>вычисление диаметра по площади сечения.</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'nod(%C,)'    )">nod(a,b)</a></td><td>Наибольший общий делитель (НОД)</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'nok(%C,)'    )">nok(a,b)</a></td><td>Наименьшее общее кратное (НОК)</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'ratio(%C,)'  )">ratio(a,b)</a></td><td>Упростить дробь</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'factor(%C)'  )">factor(a)</a></td><td>Разложить на множители</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'factorial(%C)')">factorial (a)</a></td><td>факториал x</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'C(%C,)'      )">C(n,k)</a></td><td>число сочетаний C(n,k)</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'Cr(%C,)'     )">Cr(n,k)</a></td><td>число сочетаний c повторениями Cr(n,k)</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'hours(%C,)   )">hours(n)</a></td><td>Перевод часов в (часы, минуты, секунды)</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'minutes(%C,)')">minutes(n)</a></td><td>Перевод минут в (часы, минуты, секунды)</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'seconds(%C,)')">seconds(n)</a></td><td>Перевод секунд в (часы, минуты, секунды)</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'ts(%Q00:02:32%C%Q)')">ts(n)</a></td><td>Перевод таймкода (в кавычках) в секунды</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'par(%C,)'    )">par(x,y)</a></td><td>параллельное соединение резисторов q = (x*y)/(x+y).</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'k_res(%C,)'  )">k_res(r1,r2)</a></td><td>коэффициент передачи делителя k = r2/(r1+r2).<br>
+
+</td></tr>
+
+<tr><td><a href="#" onclick="itxtM( 'date_diff(%T, %T)' )">date_diff (start_date, end_date)</a></td><td>
+Разность дат (НЕ включительно)<br>
+Пример: количество дней<br>
+date_diff('2020-06-27', '2020-06-28');
+</td></tr>
+
+<tr><td><a href="#" onclick="itxtM( 'date_after_n(%T, 10)' )">date_after_n (start_date, n)</a></td><td>
+Дата через n дней<br>
+Пример: дата через 5 дней<br>
+date_after_n('2020-06-27', 5);
+</td></tr>
+
+<tr><td><a href="#" onclick="itxtM( 'otpusk_from_to(%T, %T)')">otpusk_from_to (start_date, end_date)</a></td><td>
+Количество дней между датами (включительно)<br>
+Пример (количество дней отпуска с... по...)<br>
+otpusk_from_to('2020-06-27', '2020-06-28');
+</td></tr>
+
+<tr><td><a href="#" onclick="itxtM( 'otpusk_end_date(%T, 21)')">otpusk_end_date (start_date, n)</a></td><td>
+Дата окончания интервала отпуска (от даты и через n дней)<br>
+Пример:<br>
+otpusk_end_date('2020-06-27', 8);
+</td></tr>
+
+<tr><td><a href="#" onclick="itxtM( 'line(%C,,,)'  )">line(x0,y0,x1,y1)</a></td><td>
+Уравнение прямой по двум точкам.</td></tr>
+
+<tr><td><a href="#" onclick="itxtM( 'toreg(%C, 16)' )">toreg(value,bits)</a></td><td>
+Преобразование числа (знакового) в дополнительный код заданной разрядности (регистр).</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'frreg(%C, 16)' )">frreg(value,bits)</a></td><td>
+Преобразование из дополнительного кода заданной разрядности (регистр) в знаковое число.</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'hex([%C])' )">hex(array)</a></td><td>
+Печать массива в виде hex-строки.</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'to_vbyte(%C)' )">to_vbyte(value)</a></td><td>
+Преобразовать число в число переменной длины (как в MQTT). Возвращает массив.</td></tr>
+<tr><td><a href="#" onclick="itxtM( 'from_vbyte([%C])' )">from_vbyte(array)</a></td><td>
+Преобразовать массив-число переменной длины (как в MQTT) в число.</td></tr>
+
+</table>
+
+</div>
+<!-- telegram start -->
+<script type="application/javascript">
+Telegram.WebApp.ready();
+Telegram.WebApp.BackButton.onClick(function() {
+                history.back();
+                //DemoApp.showAlert('Back button pressed')
+            });
+Telegram.WebApp.BackButton.show();
+</script>
+<!-- telegram end -->
+
+</body>
+</html>
