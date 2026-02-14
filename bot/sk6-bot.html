@@ -126,7 +126,7 @@
         input[type="text"],input[type="numeric"] {
             /* display: block; */
             box-sizing: border-box;
-            font-size: 14px;
+            font-size: 16px;
             width: 100%;
             padding: 12px 20px;
             margin: 0px 0px 1px 0px;
@@ -177,7 +177,7 @@
         }
 
         section {
-            padding: 15px;
+            padding: 1px 15px 15px 15px;
             text-align: center;
             background-color: var(--bg-color, #ffffff);
         }
@@ -192,10 +192,12 @@
 
         .second {
             background-color: var(--tg-theme-secondary-bg-color, #efefef);
+            max-width: 800px;
         }
 
         hr {
           width: 100%;
+          max-width: 830px;
           height: 2px;
           margin: 0px;
           border: 0 none;
@@ -386,8 +388,8 @@
 </datalist>
 
 <section id="top_sect" class="second">
-    <table border="0" class="timer_title">
-    <td class="ra" colspan="4">Сколько очков есть::</td>
+    <table  class="timer_title">
+    <td class="ra" colspan="4">Сколько очков есть:</td>
     </tr><tr>
     <td class="ri"><input type="numeric" list="scores" value="80 000 000" placeholder="Есть..." id="value1" inputmode="numeric" onkeyup="return do_calc();" onchange="return do_calc();" /></td>
     <td><button class="button_after_text" onclick="add_value('value1', 1000000);">+ млн</button></td>
